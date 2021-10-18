@@ -30,8 +30,8 @@ export class Restaurant {
   @IsString()
   ownerName: string;
 
-  @Field((type) => String, {nullable: true, defaultValue: "test"})
-  @Column({default: 'test'})
+  @Field((type) => String, { nullable: true, defaultValue: 'test' })
+  @Column({ default: 'test' })
   @IsOptional()
   @IsString()
   categoryName: string;

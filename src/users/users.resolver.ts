@@ -34,12 +34,15 @@ export class UserResolver {
     }
   }
 
-  @Mutation((returns) => Boolean)
-  async login(@Args('input') loginInput: LoginInput): Promise<boolean> {
+  @Mutation((returns) => LoginOutput)
+  async login(@Args('input') loginInput: LoginInput): Promise<LoginOutput> {
     try {
-      return true;
-    } catch (e) {
-      console.log(e);
+      return await this.usersService.login(loginInput);
+    } catch (error) {
+      return {
+        ok: false,
+        error,
+      };
     }
   }
 }

@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
-import { join } from 'path';
 import * as Joi from 'joi';
 // import { RestaurantsModule } from './restaurants/restaurants.module';
 // import { Restaurant } from './restaurants/entities/restaurant.entity';
@@ -41,9 +40,11 @@ import { JwtModule } from './jwt/jwt.module';
     GraphQLModule.forRoot({
       autoSchemaFile: true,
     }),
+    JwtModule.forRoot({
+      secretKey: process.env.SECRET_KEY,
+    }),
     UsersModule,
     CommonModule,
-    JwtModule,
   ],
 })
 export class AppModule {}

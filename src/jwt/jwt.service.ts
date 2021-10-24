@@ -1,0 +1,11 @@
+import { Inject, Injectable } from '@nestjs/common';
+import { CONFIG_OPTIONS } from './jwt.contants';
+import { JwtModuleOptions } from './jwt.interfaces';
+
+@Injectable()
+export class JwtService {
+  constructor(@Inject(CONFIG_OPTIONS) private options: JwtModuleOptions) {}
+  hello() {
+    console.log(this.options);
+  }
+}

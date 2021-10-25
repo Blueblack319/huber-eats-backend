@@ -10,6 +10,8 @@ export class JwtModule {
     return {
       module: JwtModule,
       providers: [
+        // provide는 뭐고 useValue는 뭐야? provide 형태로 제공하고 useValue에 준 값을 쓰겠다?
+        // 아하! => @Inject(provide) private bananan => banana has options
         {
           provide: CONFIG_OPTIONS,
           useValue: options,

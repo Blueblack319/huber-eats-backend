@@ -1,12 +1,13 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
-  Entity,
   CreateDateColumn,
   UpdateDateColumn,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Field } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 import { IsInt, IsDate } from 'class-validator';
 
+@ObjectType()
 export class CoreEntity {
   @Field((type) => Number)
   @PrimaryGeneratedColumn()

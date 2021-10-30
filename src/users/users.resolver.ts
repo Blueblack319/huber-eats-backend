@@ -5,6 +5,8 @@ import { LoginInput, LoginOutput } from './dtos/login.dto';
 import { User } from './entities/user.entity';
 import { UserService } from './users.service';
 import { MutationOuput } from 'src/common/dtos/output.dto';
+import { UseGuards } from '@nestjs/common';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @Resolver((of) => User)
 export class UserResolver {
@@ -16,10 +18,8 @@ export class UserResolver {
   }
 
   @Query((returns) => User)
+  @UseGuards(AuthGuard)
   me(@Context() context) {
-    if (!context.user) {
-      return;
-    }
     return context.user;
   }
 

@@ -12,7 +12,6 @@ import * as Joi from 'joi';
 // import { Restaurant } from './restaurants/entities/restaurant.entity';
 import { UsersModule } from './users/users.module';
 import { User } from './users/entities/user.entity';
-import { CommonModule } from './common/common.module';
 import { JwtModule } from './jwt/jwt.module';
 import { JwtMiddleware } from './jwt/jwt.middleware';
 
@@ -53,7 +52,6 @@ import { JwtMiddleware } from './jwt/jwt.middleware';
       secretKey: process.env.SECRET_KEY,
     }),
     UsersModule,
-    CommonModule,
   ],
 })
 export class AppModule implements NestModule {

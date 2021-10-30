@@ -57,7 +57,7 @@ export class UserResolver {
     @Args('input') editProfileInput: EditProfileInput,
   ) {
     try {
-      await this.usersService.editProfile(authUser.id, { ...editProfileInput });
+      await this.usersService.editProfile(authUser.id, editProfileInput);
       return {
         ok: true,
       };

@@ -7,6 +7,7 @@ import { UserService } from './users.service';
 import { MutationOuput } from 'src/common/dtos/output.dto';
 import { UseGuards } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { AuthUser } from 'src/auth/auth-user.decorator';
 
 @Resolver((of) => User)
 export class UserResolver {
@@ -19,8 +20,11 @@ export class UserResolver {
 
   @Query((returns) => User)
   @UseGuards(AuthGuard)
-  me(@Context() context) {
-    return context.user;
+  // me(@Context() context) {
+  //   return context.user;
+  // }
+  me(@AuthUser() authUser) {
+    return authUser;
   }
 
   @Mutation((returns) => MutationOuput)

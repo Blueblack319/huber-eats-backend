@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Resolver, Query, Mutation, Args, Context } from '@nestjs/graphql';
 import { CreateAccountInput } from './dtos/create-account.dto';
 import { LoginInput, LoginOutput } from './dtos/login.dto';
@@ -9,6 +8,7 @@ import { UseGuards } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { AuthUser } from 'src/auth/auth-user.decorator';
 import { UserProfileInput, UserProfileOutput } from './dtos/user-profile.dto';
+import { EditProfileInput, EditProfileOutput } from './dtos/edit-profile.dto';
 
 @Resolver((of) => User)
 export class UserResolver {
@@ -42,6 +42,21 @@ export class UserResolver {
         ok: true,
         user,
       };
+    } catch (error) {
+      return {
+        ok: false,
+        error,
+      };
+    }
+  }
+
+  @Mutation((returns) => EditProfileOutput)
+  @UseGuards(AuthGuard)
+  async editProfile(
+    @AuthUser() authUser,
+    @Args('input') editProfileInput: EditProfileInput,
+  ) {
+    try {
     } catch (error) {
       return {
         ok: false,

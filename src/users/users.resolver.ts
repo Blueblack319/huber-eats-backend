@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { CreateAccountInput } from './dtos/create-account.dto';
 import { LoginInput, LoginOutput } from './dtos/login.dto';
@@ -13,6 +14,9 @@ export class UserResolver {
   hi() {
     return true;
   }
+
+  @Query((returns) => User)
+  me() {}
 
   @Mutation((returns) => MutationOuput)
   async createAccount(

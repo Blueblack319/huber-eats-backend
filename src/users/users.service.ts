@@ -94,4 +94,16 @@ export class UserService {
     }
     return this.users.save(user);
   }
+
+  async verifyEmail(code: string) {
+    const verification = await this.verifications.findOne(
+      { code },
+      { relations: ['User'] },
+    );
+    if (verification) {
+      verification.user.verified = true;
+      this.users.save(verification.user);
+    }
+    return false;
+  }
 }

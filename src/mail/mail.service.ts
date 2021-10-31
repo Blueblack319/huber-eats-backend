@@ -15,12 +15,10 @@ export class MailService {
         'from',
         `Hoon from Huber Eats <mailgun@${this.options.domain}>`,
       );
-      form.append('to', 'didwogns789@yonsei.ac.kr');
+      form.append('to', 'didc1461@gmail.com');
       form.append('subject', subject);
       form.append('template', template);
       emailVars.forEach((eVar) => form.append(`v:${eVar.key}`, eVar.value));
-      //   form.append('v:username', 'hoon');
-      //   form.append('v:code', 'rjiocxjv');
 
       const response = await got(
         `https://api.mailgun.net/v3/${this.options.domain}/messages`,

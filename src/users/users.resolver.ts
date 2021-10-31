@@ -50,6 +50,11 @@ export class UserResolver {
     return this.usersService.createAccount(createAccountInput);
   }
 
+  @Mutation((returns) => CoreOutput)
+  removeAccount(@Args('id') userId: number): Promise<CoreOutput> {
+    return this.usersService.removeAccount(userId);
+  }
+
   @Mutation((returns) => LoginOutput)
   login(@Args('input') loginInput: LoginInput): Promise<LoginOutput> {
     return this.usersService.login(loginInput);

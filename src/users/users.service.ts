@@ -9,6 +9,7 @@ import { EditProfileInput, EditProfileOutput } from './dtos/edit-profile.dto';
 import { Verification } from './entities/verification.entity';
 import { UserProfileOutput } from './dtos/user-profile.dto';
 import { VerifyEmailOutput } from './dtos/verify-email.dto';
+import { CoreOutput } from 'src/common/dtos/output.dto';
 
 @Injectable()
 export class UserService {
@@ -18,6 +19,10 @@ export class UserService {
     private readonly verifications: Repository<Verification>,
     private readonly jwtService: JwtService,
   ) {}
+
+  findById(id: number): Promise<User> {
+    return this.users.findOne({ id });
+  }
 
   async userProfile(id: number): Promise<UserProfileOutput> {
     try {
@@ -47,6 +52,7 @@ export class UserService {
     try {
       const user = await this.users.findOne(userId);
       if (email) {
+        await this.verifications.delete({ user });
         user.email = email;
         user.verified = false;
         await this.verifications.save(this.verifications.create({ user }));
@@ -73,7 +79,7 @@ export class UserService {
     email,
     password,
     role,
-  }: CreateAccountInput): Promise<{ ok: boolean; error?: string }> {
+  }: CreateAccountInput): Promise<CoreOutput> {
     try {
       const exists = await this.users.findOne({ email });
       if (exists) {
@@ -86,6 +92,27 @@ export class UserService {
       return { ok: true };
     } catch (e) {
       return { ok: false, error: "Couldn't create account" };
+    }
+  }
+
+  async removeAccount(id: number): Promise<CoreOutput> {
+    try {
+      const user = await this.users.findOne(id);
+      if (!user) {
+        return {
+          ok: false,
+          error: 'User not found',
+        };
+      }
+      await this.users.delete(id);
+      return {
+        ok: true,
+      };
+    } catch (error) {
+      return {
+        ok: false,
+        error,
+      };
     }
   }
 
@@ -131,17 +158,19 @@ export class UserService {
   async verifyEmail(code: string): Promise<VerifyEmailOutput> {
     const verification = await this.verifications.findOne(
       { code },
-      { relations: ['User'] },
+      { relations: ['user'] },
     );
     try {
-      verification.user.verified = true;
       if (!verification) {
         return {
           ok: false,
           error: 'Verification not found.',
         };
       }
+      verification.user.verified = true;
       this.users.save(verification.user);
+      // Why we have to delete verification?
+      this.verifications.delete(verification.id);
       return {
         ok: true,
       };

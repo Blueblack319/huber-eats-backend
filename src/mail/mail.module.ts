@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { CONFIG_OPTIONS } from 'src/common/common.constants';
 import { MailModuleOptions } from './mail.interfaces';
 import { MailService } from './mail.service';
@@ -6,6 +6,7 @@ import { MailService } from './mail.service';
 @Module({
   providers: [MailService],
 })
+@Global()
 export class MailModule {
   static forRoot(options: MailModuleOptions) {
     return {
@@ -16,6 +17,7 @@ export class MailModule {
           useValue: options,
         },
       ],
+      exports: [MailService],
     };
   }
 }

@@ -44,6 +44,7 @@ export class UserService {
     // check already made user by email
     // check password
     // make a JWT and give it to the user
+    // test
     try {
       const user = await this.users.findOne(
         { email },

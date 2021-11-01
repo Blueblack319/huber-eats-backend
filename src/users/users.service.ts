@@ -33,7 +33,6 @@ export class UserService {
         return {
           ok: false,
           error: 'User not found.',
-          te,
         };
       }
       return {

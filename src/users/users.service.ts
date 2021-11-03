@@ -22,6 +22,29 @@ export class UserService {
     private readonly mailService: MailService,
   ) {}
 
+  async createAccount({
+    email,
+    password,
+    role,
+  }: CreateAccountInput): Promise<CoreOutput> {
+    try {
+      const exists = await this.users.findOne({ email });
+      if (exists) {
+        return { ok: false, error: 'There is a user with that email already' };
+      }
+      const user = await this.users.save(
+        this.users.create({ email, password, role }),
+      );
+      const verification = await this.verifications.save(
+        this.verifications.create({ user }),
+      );
+      this.mailService.sendVerificationEmail(user.email, verification.code);
+      return { ok: true };
+    } catch (e) {
+      return { ok: false, error: "Couldn't create account" };
+    }
+  }
+
   findById(id: number): Promise<User> {
     return this.users.findOne({ id });
   }
@@ -77,29 +100,6 @@ export class UserService {
         ok: false,
         error: "Couldn't update profile",
       };
-    }
-  }
-
-  async createAccount({
-    email,
-    password,
-    role,
-  }: CreateAccountInput): Promise<CoreOutput> {
-    try {
-      const exists = await this.users.findOne({ email });
-      if (exists) {
-        return { ok: false, error: 'There is a user with that email already' };
-      }
-      const user = await this.users.save(
-        this.users.create({ email, password, role }),
-      );
-      const verification = await this.verifications.save(
-        this.verifications.create({ user }),
-      );
-      this.mailService.sendVerificationEmail(user.email, verification.code);
-      return { ok: true };
-    } catch (e) {
-      return { ok: false, error: "Couldn't create account" };
     }
   }
 

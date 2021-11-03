@@ -22,6 +22,10 @@ export class UserService {
     private readonly mailService: MailService,
   ) {}
 
+  findById(id: number): Promise<User> {
+    return this.users.findOne({ id });
+  }
+
   async createAccount({
     email,
     password,
@@ -45,8 +49,43 @@ export class UserService {
     }
   }
 
-  findById(id: number): Promise<User> {
-    return this.users.findOne({ id });
+  async login({
+    email,
+    password,
+  }: LoginInput): Promise<{ ok: boolean; error?: string; token?: string }> {
+    // check already made user by email
+    // check password
+    // make a JWT and give it to the user
+    // test
+    try {
+      const user = await this.users.findOne(
+        { email },
+        { select: ['password', 'id'] },
+      );
+      if (!user) {
+        return {
+          ok: false,
+          error: 'User not found.',
+        };
+      }
+      const passwordCorrect = await user.checkPassword(password);
+      if (!passwordCorrect) {
+        return {
+          ok: false,
+          error: 'Wrong password.',
+        };
+      }
+      const token = this.jwtService.sign(user.id);
+      return {
+        ok: true,
+        token,
+      };
+    } catch (error) {
+      return {
+        ok: false,
+        error,
+      };
+    }
   }
 
   async userProfile(id: number): Promise<UserProfileOutput> {
@@ -115,45 +154,6 @@ export class UserService {
       await this.users.delete(id);
       return {
         ok: true,
-      };
-    } catch (error) {
-      return {
-        ok: false,
-        error,
-      };
-    }
-  }
-
-  async login({
-    email,
-    password,
-  }: LoginInput): Promise<{ ok: boolean; error?: string; token?: string }> {
-    // check already made user by email
-    // check password
-    // make a JWT and give it to the user
-    // test
-    try {
-      const user = await this.users.findOne(
-        { email },
-        { select: ['password', 'id'] },
-      );
-      if (!user) {
-        return {
-          ok: false,
-          error: 'User not found.',
-        };
-      }
-      const passwordCorrect = await user.checkPassword(password);
-      if (!passwordCorrect) {
-        return {
-          ok: false,
-          error: 'Wrong password.',
-        };
-      }
-      const token = this.jwtService.sign(user.id);
-      return {
-        ok: true,
-        token,
       };
     } catch (error) {
       return {

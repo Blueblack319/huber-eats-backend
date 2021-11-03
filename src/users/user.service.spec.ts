@@ -114,12 +114,46 @@ describe('UserService', () => {
       );
       expect(result).toEqual({ ok: true });
     });
+
+    it('should fail on exception', async () => {
+      userRepository.findOne.mockRejectedValue(new Error());
+      const result = await service.createAccount(createAccountArgs);
+      expect(result).toEqual({ ok: false, error: "Couldn't create account" });
+    });
   });
 
-  it.todo('createAccount');
+  describe('login', () => {
+    let userRepository: MockRepository<User>;
+    let service: UserService;
+    let jwtService: JwtService;
+
+    const mockRepository = {
+      findOne: jest.fn(),
+      checkPassword: jest.fn(),
+    };
+
+    const mockJwtService = {
+      sign: jest.fn(),
+    };
+
+    beforeAll(async () => {
+      const moduleRef = await Test.createTestingModule({
+        providers: [
+          UserService,
+          {
+            provide: JwtService,
+            useValue: mockJwtService,
+          },
+          {
+            provide: getRepositoryToken(User),
+            useValue: mockRepository,
+          },
+        ],
+      });
+    });
+  });
   it.todo('userProfile');
   it.todo('editProfile');
-  it.todo('login');
   it.todo('verifyEmail');
   it.todo('removeAccount');
 });

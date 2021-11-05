@@ -126,14 +126,23 @@ describe('UserService', () => {
     let userRepository: MockRepository<User>;
     let service: UserService;
     let jwtService: JwtService;
+    let mailService: MailService;
 
-    const mockRepository = {
+    const loginArgs = {
+      email: 'test@test.com',
+      password: 'test',
+    };
+
+    const mockRepository = () => ({
       findOne: jest.fn(),
       checkPassword: jest.fn(),
-    };
+    });
 
     const mockJwtService = {
       sign: jest.fn(),
+    };
+    const mockMailService = {
+      sendVerificationEmail: jest.fn(),
     };
 
     beforeAll(async () => {
@@ -146,10 +155,35 @@ describe('UserService', () => {
           },
           {
             provide: getRepositoryToken(User),
-            useValue: mockRepository,
+            useValue: mockRepository(),
+          },
+          {
+            provide: getRepositoryToken(Verification),
+            useValue: mockRepository(),
+          },
+          {
+            provide: MailService,
+            useValue: mockMailService,
           },
         ],
+      }).compile();
+      userRepository = moduleRef.get(getRepositoryToken(User));
+      service = moduleRef.get<UserService>(UserService);
+      jwtService = moduleRef.get<JwtService>(JwtService);
+    });
+
+    it('should fail if user doesnt exist', async () => {
+      userRepository.findOne.mockResolvedValue(undefined);
+      const result = await service.login(loginArgs);
+      expect(result).toEqual({
+        ok: false,
+        error: 'User not found.',
       });
+    });
+
+    it('should login with email and password', async () => {
+      userRepository.findOne.mockResolvedValue();
+      service.login(loginArgs);
     });
   });
   it.todo('userProfile');
